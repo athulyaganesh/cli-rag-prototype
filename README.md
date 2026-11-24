@@ -184,4 +184,5 @@ The dimensions come from labeled diagrams, so the extracted text has the numbers
 
 <img width="1469" height="727" alt="Screenshot 2026-11-23 at 9 35 02 PM" src="https://github.com/user-attachments/assets/1f0b315e-2fba-4243-aaa1-bb6c4d72bdc5" />
 <img width="1470" height="736" alt="Screenshot 2026-11-23 at 9 36 53 PM" src="https://github.com/user-attachments/assets/3b3656ed-c38e-4fb5-89ee-c8dabc3b871c" />
+<img width="1467" height="728" alt="Screenshot 2026-11-23 at 9 38 27 PM" src="https://github.com/user-attachments/assets/773de064-9ea4-4323-9bb8-293d19061798" />
 
