@@ -13,12 +13,12 @@ A prototype customer assistant that works with any set of PDF documents. It answ
 
 ## Setup
 
-Requires Python 3.11 or newer.
+Tested with Python 3.12.
 
 ```bash
-python -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
-pip install langchain-community langchain-text-splitters langchain-google-genai langchain-chroma pymupdf python-dotenv
+pip install -r requirements.txt
 cp .env.example .env   # then add your key
 ```
 

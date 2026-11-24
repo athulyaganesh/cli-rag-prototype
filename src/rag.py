@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 
 from ingest import open_vector_store
 
-CHAT_MODEL = "gemini-2.5-flash"
+CHAT_MODEL = "gemini-3.5-flash"
 RETRIEVAL_K = 5
 DEFAULT_RELEVANCE_THRESHOLD = "0.5"
 NO_ACCESS_MESSAGE = "Sorry, I don't have access to that information."
