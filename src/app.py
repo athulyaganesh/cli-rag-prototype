@@ -1,18 +1,23 @@
 """Streamlit web app: chat support and email drafting on the same RAG backend.
 
 Run locally: streamlit run src/app.py
-Documents are indexed separately with src/ingest.py.
+Upload PDFs in the sidebar, or index them beforehand with src/ingest.py.
 """
 
 import hmac
 import logging
 import os
+from pathlib import Path
 
 import streamlit as st
 from dotenv import load_dotenv
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 from copilot import EMAIL_GREETING, EMAIL_SIGN_OFF, format_sources
+from ingest import ingest_docs
 from rag import AnswerResult, Mode, answer
+
+DOCS_DIR = Path("docs")
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +36,29 @@ def is_authorized() -> bool:
     elif entered_password:
         st.error("Wrong password.")
     return False
+
+
+def process_uploads(uploaded_files: list[UploadedFile]) -> None:
+    """Save uploaded PDFs to DOCS_DIR, then index everything in it."""
+    try:
+        DOCS_DIR.mkdir(exist_ok=True)
+        for uploaded_file in uploaded_files:
+            # Keep only the base name so a crafted filename can't write outside DOCS_DIR.
+            (DOCS_DIR / Path(uploaded_file.name).name).write_bytes(uploaded_file.getvalue())
+        with st.spinner("Extracting, chunking and embedding..."):
+            report = ingest_docs(DOCS_DIR)
+        st.success(f"{len(report.indexed)} indexed, {len(report.skipped)} unchanged.")
+    except Exception as error:
+        logger.exception("Processing documents failed")
+        st.error(f"Processing failed: {type(error).__name__}: {error}")
+
+
+def render_upload_sidebar() -> None:
+    with st.sidebar:
+        st.header("Documents")
+        uploaded_files = st.file_uploader("Upload PDFs", type="pdf", accept_multiple_files=True)
+        if st.button("Process Documents", disabled=not uploaded_files):
+            process_uploads(uploaded_files)
 
 
 def ask(question: str, mode: Mode) -> AnswerResult | None:
@@ -98,6 +126,7 @@ def main() -> None:
     if not is_authorized():
         return
 
+    render_upload_sidebar()
     chat_tab, email_tab = st.tabs(["Chat Support", "Email Support"])
     with chat_tab:
         render_chat_tab()

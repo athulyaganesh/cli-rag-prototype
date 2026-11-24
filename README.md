@@ -47,6 +47,8 @@ Email mode prints a draft with a greeting and sign-off, and sources listed for t
 
 A Streamlit app with two tabs: **Chat Support** (questions with cited answers) and **Email Support** (paste a customer email, get an editable draft reply with sources). Both use the same `answer()` backend as the CLI.
 
+To add documents, upload PDFs in the sidebar and click **Process Documents**. They're saved to `docs/` and indexed, and unchanged files are skipped. On free hosts with temporary storage, upload again after each restart.
+
 Run locally:
 
 ```bash
@@ -54,7 +56,7 @@ python src/ingest.py --docs docs/
 streamlit run src/app.py
 ```
 
-Run with Docker (the database is kept in a Docker volume, and `docs/` is mounted read-only):
+Run with Docker (the database is kept in a Docker volume, and `docs/` is mounted from the host):
 
 ```bash
 docker compose up -d --build

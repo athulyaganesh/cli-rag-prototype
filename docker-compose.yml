@@ -6,7 +6,7 @@ services:
     env_file: .env
     volumes:
       - chroma_db:/app/db
-      - ./docs:/app/docs:ro
+      - ./docs:/app/docs
     restart: unless-stopped
 
 volumes:
