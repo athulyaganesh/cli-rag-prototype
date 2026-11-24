@@ -91,6 +91,8 @@ Sam
 EOF
 
 python src/copilot.py --docs docs/ --mode email < docs/email.txt
+
+Run with the UI: .venv/bin/streamlit run src/app.py 
 ```
 
 Example output (anonymized):
@@ -179,7 +181,7 @@ The dimensions come from labeled diagrams, so the extracted text has the numbers
 - Prototype only, not deployed or measured in production.
 - PDFs removed from the docs folder stay in the database until `db/` is deleted.
 
-<img width="1470" height="956" alt="Screenshot 2026-11-23 at 9 34 57 PM" src="https://github.com/user-attachments/assets/6d4fd217-845b-4e7d-9439-9dfcc45fe9ce" />
+
 <img width="1469" height="727" alt="Screenshot 2026-11-23 at 9 35 02 PM" src="https://github.com/user-attachments/assets/1f0b315e-2fba-4243-aaa1-bb6c4d72bdc5" />
 <img width="1470" height="736" alt="Screenshot 2026-11-23 at 9 36 53 PM" src="https://github.com/user-attachments/assets/3b3656ed-c38e-4fb5-89ee-c8dabc3b871c" />
 
