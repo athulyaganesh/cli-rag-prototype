@@ -21,11 +21,11 @@ Build a Python CLI RAG tool using LangChain + Gemini that answers questions from
 - No guessing model numbers or specs not in the chunks.
 
 ## Files
-- ingest.py  (steps 1–4)
-- rag.py     (answer())
-- copilot.py (CLI):
-    python copilot.py --docs docs/ --mode chat     -> REPL: question -> answer + sources
-    python copilot.py --docs docs/ --mode email < email.txt -> draft reply with greeting/sign-off,
+- src/ingest.py  (steps 1–4)
+- src/rag.py     (answer())
+- src/copilot.py (CLI, run from the project root):
+    python src/copilot.py --docs docs/ --mode chat     -> REPL: question -> answer + sources
+    python src/copilot.py --docs docs/ --mode email < email.txt -> draft reply with greeting/sign-off,
       or "NEEDS HUMAN: <reason>" if escalate
 - Both modes call answer(); nothing else touches the vector store or LLM.
 
