@@ -1,12 +1,13 @@
 """Answer support questions from the indexed docs, or escalate to a human.
 
-answer() is the only entry point; both CLI modes call it.
+answer() is the only entry point; the CLI and web app both call it.
 """
 
 import logging
 import os
 from functools import cache
 from pathlib import Path
+from typing import Literal
 
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
@@ -20,7 +21,11 @@ CHAT_MODEL = "gemini-3.5-flash"
 RETRIEVAL_K = 5
 DEFAULT_RELEVANCE_THRESHOLD = "0.5"
 NO_ACCESS_MESSAGE = "Sorry, I don't have access to that information."
-SYSTEM_PROMPT_PATH = Path(__file__).resolve().parent.parent / "prompts" / "system_prompt.md"
+PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
+SYSTEM_PROMPT_PATH = PROMPTS_DIR / "system_prompt.md"
+EMAIL_PROMPT_PATH = PROMPTS_DIR / "email_prompt.md"
+
+Mode = Literal["chat", "email"]
 
 logger = logging.getLogger(__name__)
 
@@ -62,8 +67,16 @@ def get_llm() -> Runnable:
 
 
 @cache
-def load_system_prompt() -> str:
-    return SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+def load_prompt(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def build_system_prompt(mode: Mode) -> str:
+    """The shared rules, plus reply-writing instructions in email mode."""
+    system_prompt = load_prompt(SYSTEM_PROMPT_PATH)
+    if mode == "email":
+        return f"{system_prompt}\n\n{load_prompt(EMAIL_PROMPT_PATH)}"
+    return system_prompt
 
 
 def retrieve_relevant_chunks(question: str) -> list[Document]:
@@ -111,18 +124,18 @@ def escalate(reason: str) -> AnswerResult:
     return AnswerResult(answer=NO_ACCESS_MESSAGE, citations=[], escalate=True, reason=reason)
 
 
-def answer(question: str) -> AnswerResult:
-    """Answer a question from the docs with citations, or escalate.
+def answer(question: str, mode: Mode = "chat") -> AnswerResult:
+    """Answer a question (or, in email mode, a customer email) from the docs, or escalate.
 
     Escalates without calling the LLM when no chunk is relevant enough.
-    API errors from Gemini or Chroma are not caught here; the CLI handles them.
+    API errors from Gemini or Chroma are not caught here; the CLI and app handle them.
     """
     chunks = retrieve_relevant_chunks(question)
     if not chunks:
         return escalate("No documentation passed the relevance threshold.")
 
     reply = get_llm().invoke(
-        [("system", load_system_prompt()), ("human", build_user_message(question, chunks))]
+        [("system", build_system_prompt(mode)), ("human", build_user_message(question, chunks))]
     )
     if not isinstance(reply, ModelReply):
         return escalate("The model's reply could not be parsed.")

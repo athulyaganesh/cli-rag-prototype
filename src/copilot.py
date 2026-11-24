@@ -72,7 +72,7 @@ def run_email() -> None:
     email_text = sys.stdin.read().strip()
     if not email_text:
         raise ValueError("No email text on stdin. Usage: --mode email < email.txt")
-    print(format_email_draft(answer(email_text)))
+    print(format_email_draft(answer(email_text, mode="email")))
 
 
 def main() -> None:

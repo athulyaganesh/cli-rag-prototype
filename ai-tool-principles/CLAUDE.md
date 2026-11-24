@@ -27,7 +27,8 @@ Build a Python CLI RAG tool using LangChain + Gemini that answers questions from
     python src/copilot.py --docs docs/ --mode chat     -> REPL: question -> answer + sources
     python src/copilot.py --docs docs/ --mode email < email.txt -> draft reply with greeting/sign-off,
       or "NEEDS HUMAN: <reason>" if escalate
-- Both modes call answer(); nothing else touches the vector store or LLM.
+- src/app.py: Streamlit web app (see STREAMLIT_DEPLOYMENT.md).
+- CLI modes and app.py all call answer(); nothing else touches the vector store or LLM.
 
 ## Constraints
 - API key from env GOOGLE_API_KEY; never hardcode. Add .gitignore (db/, .venv, .env).

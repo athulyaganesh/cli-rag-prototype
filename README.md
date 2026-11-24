@@ -43,6 +43,27 @@ python src/ingest.py --docs docs/
 
 Email mode prints a draft with a greeting and sign-off, and sources listed for the reviewer, or `NEEDS HUMAN: <reason>` if the question should go to support staff.
 
+## Web app
+
+A Streamlit app with two tabs: **Chat Support** (questions with cited answers) and **Email Support** (paste a customer email, get an editable draft reply with sources). Both use the same `answer()` backend as the CLI.
+
+Run locally:
+
+```bash
+python src/ingest.py --docs docs/
+streamlit run src/app.py
+```
+
+Run with Docker (the database is kept in a Docker volume, and `docs/` is mounted read-only):
+
+```bash
+docker compose up -d --build
+docker compose run --rm app python src/ingest.py --docs docs/
+docker compose restart app   # so the running app sees newly indexed documents
+```
+
+Then open http://localhost:8501. Set `APP_PASSWORD` in `.env` to require a password, which is recommended on any public server, since the app uses your API key.
+
 ## Testing
 
 Put test PDFs and emails in `docs/`. The folder is git-ignored, so they never get committed.
@@ -145,7 +166,10 @@ The dimensions come from labeled diagrams, so the extracted text has the numbers
 | `src/ingest.py` | Load, chunk, embed and store PDFs |
 | `src/rag.py` | `answer()`: retrieval, Gemini call, citation checks |
 | `src/copilot.py` | Command-line tool: chat and email modes |
+| `src/app.py` | Streamlit web app: chat and email tabs |
 | `prompts/system_prompt.md` | Rules Gemini must follow |
+| `prompts/email_prompt.md` | Extra rules for writing email replies |
+| `Dockerfile`, `docker-compose.yml` | Container setup for deployment |
 | `ai-tool-principles/` | Project spec and coding conventions for AI coding assistants |
 
 ## Limits
